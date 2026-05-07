@@ -1072,7 +1072,7 @@
                         <!-- Project 1 -->
                         <div class="repo-card">
                             <div class="repo-header">
-                                <a href="https://github.com/j1a1c1k1" class="repo-name" target="_blank">
+                                <a href="https://github.com/j1a1c1k1/Cloud-Classroom/blob/main/README.md" class="repo-name" target="_blank">
                                     <i class="fas fa-graduation-cap"></i>
                                     Cloud-Classroom
                                 </a>
@@ -1084,114 +1084,19 @@
                             <div class="project-details">
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>断点续播：Redis合并写请求 + DelayQueue 优化高并发写入，保证视频播放误差在30s内</span>
+                                    <span>断点续播：Redis合并写请求 + DelayQueue 优化高并发写入</span>
                                 </div>
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>优惠券：按位加权求和算法生成兑换码 + BitMap验证码是否已兑换</span>
+                                    <span>优惠券：按位加权求和算法生成兑换码 + BitMap验证</span>
                                 </div>
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>排行榜：Redis Zset实时排行 + XXL-Job 分片任务持久化历史榜单到MySQL分库分表</span>
+                                    <span>排行榜：Redis Zset实时排行 + XXL-Job 分片持久化</span>
                                 </div>
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>问答评论模块：RabbitMQ异步推送积分，支持匿名/实名评论</span>
-                                </div>
-                            </div>
-
-                            <!-- Architecture -->
-                            <div class="arch-section">
-                                <h4><i class="fas fa-sitemap"></i> 架构设计</h4>
-                                <div class="arch-point">
-                                    <strong>微服务架构：</strong>基于 SpringCloud Alibaba 构建，服务拆分包括：学习服务、课程服务、优惠券服务、积分服务、网关服务。各服务通过 Nacos 注册与发现，Feign 进行远程调用。
-                                </div>
-                                <div class="arch-point">
-                                    <strong>数据库设计：</strong>MySQL 采用分库分表策略（ShardingSphere），按业务维度拆分。优惠券兑换码使用 BitMap 存储已兑换状态，查询时间复杂度 O(1)。
-                                </div>
-                                <div class="arch-point">
-                                    <strong>缓存策略：</strong>Redis 缓存课程热度数据、排行榜实时数据；利用 Zset 的 score 排序实现积分排行，通过延迟双删策略保证缓存一致性。
-                                </div>
-                            </div>
-
-                            <!-- Key Code: 断点续播 -->
-                            <div class="code-block">
-                                <div class="code-header">
-                                    <span class="lang">Java - 断点续播 Redis 合并写请求</span>
-                                    <button class="toggle-code" onclick="this.parentElement.nextElementSibling.classList.toggle('code-hidden');this.textContent=this.textContent==='查看代码'?'收起代码':'查看代码'">查看代码</button>
-                                </div>
-                                <div class="code-body code-hidden">
-<span class="comment">// Redis合并写请求 + DelayQueue 延迟写入，减少数据库压力</span>
-<span class="annotation">@Service</span>
-<span class="keyword">public class</span> <span class="type">ProgressService</span> {
-    <span class="annotation">@Autowired</span>
-    <span class="keyword">private</span> <span class="type">RedisTemplate</span> redisTemplate;
-
-    <span class="keyword">private final</span> <span class="type">DelayQueue</span>&lt;<span class="type">ProgressDelayItem</span>&gt; delayQueue = <span class="keyword">new</span> <span class="type">DelayQueue</span>&lt;&gt;();
-
-    <span class="comment">// 视频播放进度上报 - 先写入Redis延迟队列</span>
-    <span class="keyword">public</span> <span class="type">void</span> <span class="method">reportProgress</span>(<span class="type">Long</span> userId, <span class="type">Long</span> courseId, <span class="type">Long</span> videoId, <span class="type">Integer</span> progress) {
-        <span class="type">String</span> key = <span class="string">"progress:"</span> + userId + <span class="string">":"</span> + videoId;
-        redisTemplate.opsForValue().set(key, progress, <span class="type">Duration</span>.ofMinutes(<span class="string">5</span>));
-        delayQueue.offer(<span class="keyword">new</span> <span class="type">ProgressDelayItem</span>(userId, courseId, videoId, progress, <span class="type">System</span>.currentTimeMillis() + <span class="string">30000</span>));
-    }
-
-    <span class="comment">// 延迟队列消费者 - 批量写入数据库</span>
-    <span class="annotation">@Scheduled</span>(fixedDelay = <span class="string">30000</span>)
-    <span class="keyword">public void</span> <span class="method">batchFlush</span>() {
-        <span class="type">List</span>&lt;<span class="type">ProgressDelayItem</span>&gt; batch = <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;();
-        delayQueue.drainTo(batch);
-        <span class="keyword">if</span> (!batch.isEmpty()) {
-            <span class="comment">// 批量更新数据库，误差控制在30s内</span>
-            progressMapper.batchUpdateProgress(batch);
-        }
-    }
-}
-                                </div>
-                            </div>
-
-                            <!-- Key Code: 优惠券兑换码 -->
-                            <div class="code-block">
-                                <div class="code-header">
-                                    <span class="lang">Java - 优惠券兑换码生成（按位加权求和算法）</span>
-                                    <button class="toggle-code" onclick="this.parentElement.nextElementSibling.classList.toggle('code-hidden');this.textContent=this.textContent==='查看代码'?'收起代码':'查看代码'">查看代码</button>
-                                </div>
-                                <div class="code-body code-hidden">
-<span class="comment">// 按位加权求和算法生成唯一兑换码 + BitMap验证</span>
-<span class="annotation">@Service</span>
-<span class="keyword">public class</span> <span class="type">CouponCodeService</span> {
-
-    <span class="keyword">private static final</span> <span class="type">String</span> CHARS = <span class="string">"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"</span>;
-    <span class="keyword">private static final</span> <span class="type">int</span> CODE_LENGTH = <span class="string">8</span>;
-
-    <span class="comment">// 异步批量生成兑换码</span>
-    <span class="annotation">@Async</span>
-    <span class="keyword">public</span> <span class="type">CompletableFuture</span>&lt;<span class="type">List</span>&lt;<span class="type">String</span>&gt;&gt; <span class="method">generateCodes</span>(<span class="type">int</span> count) {
-        <span class="type">List</span>&lt;<span class="type">String</span>&gt; codes = <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;(count);
-        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="string">0</span>; i &lt; count; i++) {
-            codes.add(generateSingleCode(i));
-        }
-        <span class="comment">// 存入BitMap标记未兑换</span>
-        redisTemplate.opsForValue().setBit(<span class="string">"coupon:bitmap"</span>, i, <span class="keyword">false</span>);
-        <span class="keyword">return</span> <span class="type">CompletableFuture</span>.completedFuture(codes);
-    }
-
-    <span class="keyword">private</span> <span class="type">String</span> <span class="method">generateSingleCode</span>(<span class="type">int</span> sequence) {
-        <span class="comment">// 按位加权：序列号 * 权重因子 + 校验位</span>
-        <span class="type">long</span> weighted = sequence * <span class="string">7L</span> + <span class="string">3L</span>;
-        <span class="type">StringBuilder</span> sb = <span class="keyword">new</span> <span class="type">StringBuilder</span>();
-        <span class="keyword">while</span> (weighted &gt; <span class="string">0</span>) {
-            sb.append(CHARS.charAt((<span class="type">int</span>)(weighted % CHARS.length())));
-            weighted /= CHARS.length();
-        }
-        <span class="keyword">return</span> sb.reverse().toString();
-    }
-
-    <span class="comment">// BitMap O(1)验证兑换码是否已使用</span>
-    <span class="keyword">public</span> <span class="type">boolean</span> <span class="method">isCodeUsed</span>(<span class="type">int</span> codeIndex) {
-        <span class="keyword">return</span> redisTemplate.opsForValue().getBit(<span class="string">"coupon:bitmap"</span>, codeIndex);
-    }
-}
+                                    <span>问答评论：RabbitMQ异步推送积分，支持匿名/实名评论</span>
                                 </div>
                             </div>
                             <div class="repo-meta">
@@ -1199,13 +1104,17 @@
                                     <span class="language-color"></span>
                                     Java
                                 </span>
+                                <span class="repo-stat">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    <a href="https://github.com/j1a1c1k1/Cloud-Classroom/blob/main/README.md" style="color:var(--github-accent);text-decoration:none;font-size:12px;" target="_blank">查看完整架构 →</a>
+                                </span>
                             </div>
                         </div>
 
                         <!-- Project 2 -->
                         <div class="repo-card">
                             <div class="repo-header">
-                                <a href="https://github.com/j1a1c1k1" class="repo-name" target="_blank">
+                                <a href="https://github.com/j1a1c1k1/Mental-Health-Agent/blob/main/README.md" class="repo-name" target="_blank">
                                     <i class="fas fa-heart"></i>
                                     Mental-Health-Agent
                                 </a>
@@ -1217,11 +1126,11 @@
                             <div class="project-details">
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>情绪识别：Whisper + MediaPipe 多模态融合引擎，输出精准情绪标签与风险等级</span>
+                                    <span>情绪识别：Whisper + MediaPipe 多模态融合引擎</span>
                                 </div>
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>Agentic RAG：Chroma向量库 + Ollama/OpenAI多模型路由，Flux SSE流式会话接口</span>
+                                    <span>Agentic RAG：Chroma向量库 + Ollama/OpenAI多模型路由</span>
                                 </div>
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
@@ -1232,100 +1141,14 @@
                                     <span>LoRA微调大模型，情绪识别准确率提升至90%</span>
                                 </div>
                             </div>
-
-                            <!-- Architecture -->
-                            <div class="arch-section">
-                                <h4><i class="fas fa-sitemap"></i> 架构设计</h4>
-                                <div class="arch-point">
-                                    <strong>多模态感知层：</strong>通过 Whisper（语音转文本） + MediaPipe（面部表情分析）采集多模态数据，经情绪融合引擎输出综合情绪标签及风险等级。
-                                </div>
-                                <div class="arch-point">
-                                    <strong>Agentic RAG 引擎：</strong>基于 Chroma 向量数据库构建专业心理知识库，实现 Ollama（本地）与 OpenAI（云端）多模型策略路由。利用 Flux 实现 SSE 流式会话接口，提供低延迟、高准确的心理咨询对话体验。
-                                </div>
-                                <div class="arch-point">
-                                    <strong>MCP 服务集成：</strong>通过 MCP 协议对接邮件服务与 Excel 服务，高风险用户自动触发邮件预警，同时将会话数据同步至 Excel 进行统计分析。基于 Spring Security 实现数据权限隔离。
-                                </div>
-                            </div>
-
-                            <!-- Key Code: 多模态情绪融合 -->
-                            <div class="code-block">
-                                <div class="code-header">
-                                    <span class="lang">Java - 多模态情绪融合引擎</span>
-                                    <button class="toggle-code" onclick="this.parentElement.nextElementSibling.classList.toggle('code-hidden');this.textContent=this.textContent==='查看代码'?'收起代码':'查看代码'">查看代码</button>
-                                </div>
-                                <div class="code-body code-hidden">
-<span class="comment">// 多模态情绪融合引擎 - 融合语音、图像、视频的情绪分析结果</span>
-<span class="annotation">@Service</span>
-<span class="keyword">public class</span> <span class="type">MultiModalEmotionFusionEngine</span> {
-
-    <span class="annotation">@Autowired</span>
-    <span class="keyword">private</span> <span class="type">WhisperService</span> whisperService;
-    <span class="annotation">@Autowired</span>
-    <span class="keyword">private</span> <span class="type">MediaPipeService</span> mediaPipeService;
-
-    <span class="keyword">public</span> <span class="type">EmotionResult</span> <span class="method">analyze</span>(<span class="type">MultipartFile</span> audioFile, <span class="type">MultipartFile</span> videoFile) {
-        <span class="comment">// 1. 语音情绪分析 - Whisper转文本 + 情感分析</span>
-        <span class="type">String</span> transcript = whisperService.transcribe(audioFile);
-        <span class="type">EmotionLabel</span> audioEmotion = analyzeTextEmotion(transcript);
-
-        <span class="comment">// 2. 视觉情绪分析 - MediaPipe面部特征提取</span>
-        <span class="type">List</span>&lt;<span class="type">FaceLandmark</span>&gt; landmarks = mediaPipeService.extractLandmarks(videoFile);
-        <span class="type">EmotionLabel</span> visualEmotion = classifyByLandmarks(landmarks);
-
-        <span class="comment">// 3. 加权融合 - 输出综合情绪标签与风险等级</span>
-        <span class="keyword">double</span> fusionScore = audioEmotion.getScore() * <span class="string">0.6</span> + visualEmotion.getScore() * <span class="string">0.4</span>;
-        <span class="type">RiskLevel</span> risk = fusionScore &gt; <span class="string">0.8</span> ? <span class="type">RiskLevel</span>.HIGH :
-                     fusionScore &gt; <span class="string">0.5</span> ? <span class="type">RiskLevel</span>.MEDIUM : <span class="type">RiskLevel</span>.LOW;
-
-        <span class="keyword">return new</span> <span class="type">EmotionResult</span>(fusionScore, risk, audioEmotion, visualEmotion);
-    }
-}
-                                </div>
-                            </div>
-
-                            <!-- Key Code: Agentic RAG 流式会话 -->
-                            <div class="code-block">
-                                <div class="code-header">
-                                    <span class="lang">Java - Agentic RAG 流式会话接口（Flux + SSE）</span>
-                                    <button class="toggle-code" onclick="this.parentElement.nextElementSibling.classList.toggle('code-hidden');this.textContent=this.textContent==='查看代码'?'收起代码':'查看代码'">查看代码</button>
-                                </div>
-                                <div class="code-body code-hidden">
-<span class="comment">// Agentic RAG 流式会话 - 多模型策略路由 + SSE推送</span>
-<span class="annotation">@RestController</span>
-<span class="keyword">public class</span> <span class="type">ChatController</span> {
-
-    <span class="annotation">@Autowired</span>
-    <span class="keyword">private</span> <span class="type">ChromaVectorStore</span> vectorStore;
-    <span class="annotation">@Autowired</span>
-    <span class="keyword">private</span> <span class="type">ModelRouter</span> modelRouter;
-
-    <span class="annotation">@GetMapping</span>(value = <span class="string">"/api/chat/stream"</span>, produces = <span class="type">MediaType</span>.TEXT_EVENT_STREAM_VALUE)
-    <span class="keyword">public</span> <span class="type">Flux</span>&lt;<span class="type">ServerSentEvent</span>&lt;<span class="type">String</span>&gt;&gt; <span class="method">streamChat</span>(<span class="annotation">@RequestParam</span> <span class="type">String</span> question,
-                                                          <span class="annotation">@RequestParam</span> <span class="type">String</span> userId) {
-        <span class="comment">// 1. 检索相关知识</span>
-        <span class="type">List</span>&lt;<span class="type">Document</span>&gt; relevantDocs = vectorStore.similaritySearch(
-            <span class="type">SearchRequest</span>.query(question).withTopK(<span class="string">3</span>)
-        );
-
-        <span class="comment">// 2. 模型策略路由 - 简单问题用Ollama，复杂用OpenAI</span>
-        <span class="type">ChatClient</span> client = modelRouter.route(question);
-
-        <span class="comment">// 3. 构建增强提示并流式返回</span>
-        <span class="type">String</span> prompt = buildPrompt(question, relevantDocs);
-        <span class="keyword">return</span> client.prompt()
-            .user(prompt)
-            .stream()
-            .content()
-            .map(chunk -> <span class="type">ServerSentEvent</span>.&lt;<span class="type">String</span>&gt;builder(chunk)
-                .event(<span class="string">"message"</span>).build());
-    }
-}
-                                </div>
-                            </div>
                             <div class="repo-meta">
                                 <span class="repo-stat">
                                     <span class="language-color"></span>
                                     Java
+                                </span>
+                                <span class="repo-stat">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    <a href="https://github.com/j1a1c1k1/Mental-Health-Agent/blob/main/README.md" style="color:var(--github-accent);text-decoration:none;font-size:12px;" target="_blank">查看完整架构 →</a>
                                 </span>
                             </div>
                         </div>
@@ -1333,7 +1156,7 @@
                         <!-- Project 3 -->
                         <div class="repo-card">
                             <div class="repo-header">
-                                <a href="https://github.com/j1a1c1k1" class="repo-name" target="_blank">
+                                <a href="https://github.com/j1a1c1k1/Distributed-Coupon-System/blob/main/README.md" class="repo-name" target="_blank">
                                     <i class="fas fa-database"></i>
                                     Distributed-Coupon-System
                                 </a>
@@ -1345,29 +1168,21 @@
                             <div class="project-details">
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>乐观锁 + Redisson分布式锁并发控制</span>
+                                    <span>乐观锁 + Redisson分布式锁双重并发控制</span>
                                 </div>
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>组合优惠券最优解算法实现</span>
+                                    <span>四步最优解算法：初筛→细筛→组合→最优</span>
                                 </div>
                             </div>
-
-                            <!-- Architecture -->
-                            <div class="arch-section">
-                                <h4><i class="fas fa-sitemap"></i> 架构设计</h4>
-                                <div class="arch-point">
-                                    <strong>并发控制：</strong>采用乐观锁（CAS）机制 + Redisson 分布式锁双重保障，解决高并发下优惠券库存超发问题。分布式锁使用 Redisson 的看门狗机制自动续期，防止死锁。
-                                </div>
-                                <div class="arch-point">
-                                    <strong>优惠券组合算法：</strong>查询所有可用优惠券，经过"初筛（排除不可用优惠券）→ 细筛（按优惠券类型匹配）→ 排列组合（计算所有组合的优惠金额）→ 最优解（选出最大优惠力度）"四步流程，确保用户每次下单都能获得最优优惠。
-                                </div>
-                            </div>
-
                             <div class="repo-meta">
                                 <span class="repo-stat">
                                     <span class="language-color"></span>
                                     Java
+                                </span>
+                                <span class="repo-stat">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    <a href="https://github.com/j1a1c1k1/Distributed-Coupon-System/blob/main/README.md" style="color:var(--github-accent);text-decoration:none;font-size:12px;" target="_blank">查看完整架构 →</a>
                                 </span>
                             </div>
                         </div>
@@ -1375,7 +1190,7 @@
                         <!-- Project 4 -->
                         <div class="repo-card">
                             <div class="repo-header">
-                                <a href="https://github.com/j1a1c1k1" class="repo-name" target="_blank">
+                                <a href="https://github.com/j1a1c1k1/Video-Learning-System/blob/main/README.md" class="repo-name" target="_blank">
                                     <i class="fas fa-video"></i>
                                     Video-Learning-System
                                 </a>
@@ -1387,29 +1202,21 @@
                             <div class="project-details">
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>Redis合并写请求优化数据库压力，30秒批量落库</span>
+                                    <span>Redis合并写请求 + DelayQueue 延迟批量落库</span>
                                 </div>
                                 <div class="project-detail-item">
                                     <i class="fas fa-check"></i>
-                                    <span>Redis + DelayQueue 延迟写入，视频播放误差控制在30秒内</span>
+                                    <span>视频播放误差控制在30秒内</span>
                                 </div>
                             </div>
-
-                            <!-- Architecture -->
-                            <div class="arch-section">
-                                <h4><i class="fas fa-sitemap"></i> 架构设计</h4>
-                                <div class="arch-point">
-                                    <strong>缓存加速：</strong>用户视频播放进度实时写入 Redis（TTL 5分钟），通过 DelayQueue 延迟 30s 后批量合并写入 MySQL，显著降低数据库写入压力。
-                                </div>
-                                <div class="arch-point">
-                                    <strong>数据一致性：</strong>采用定时刷新策略，确保用户断线重连后可从上一次记录点继续观看，视频播放误差控制在 30s 内。MyBatis-Plus 动态表名支持分表存储。
-                                </div>
-                            </div>
-
                             <div class="repo-meta">
                                 <span class="repo-stat">
                                     <span class="language-color"></span>
                                     Java
+                                </span>
+                                <span class="repo-stat">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    <a href="https://github.com/j1a1c1k1/Video-Learning-System/blob/main/README.md" style="color:var(--github-accent);text-decoration:none;font-size:12px;" target="_blank">查看完整架构 →</a>
                                 </span>
                             </div>
                         </div>
