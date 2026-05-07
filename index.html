@@ -959,44 +959,6 @@
         <div class="container" style="display: contents;">
             <!-- Sidebar -->
             <aside class="sidebar">
-                <!-- Tencent Penguin Badge -->
-                <div class="tencent-badge">
-                    <svg class="badge-penguin" viewBox="0 0 50 65">
-                        <!-- Body -->
-                        <ellipse cx="25" cy="38" rx="14" ry="20" fill="#2d3748"/>
-                        <!-- Belly -->
-                        <ellipse cx="25" cy="40" rx="9" ry="14" fill="#e2e8f0"/>
-                        <!-- Head -->
-                        <circle cx="25" cy="14" r="12" fill="#2d3748"/>
-                        <!-- Face -->
-                        <ellipse cx="25" cy="17" rx="8" ry="5" fill="#e2e8f0"/>
-                        <!-- Eyes -->
-                        <circle cx="20" cy="11" r="3" fill="#e2e8f0"/>
-                        <circle cx="30" cy="11" r="3" fill="#e2e8f0"/>
-                        <circle cx="20" cy="11" r="1.5" fill="#1a202c"/>
-                        <circle cx="30" cy="11" r="1.5" fill="#1a202c"/>
-                        <!-- Beak -->
-                        <path d="M21 19 L25 25 L29 19 Z" fill="#ed8936"/>
-                        <!-- Wings -->
-                        <ellipse cx="11" cy="36" rx="5" ry="12" fill="#2d3748" transform="rotate(15 11 36)"/>
-                        <ellipse cx="39" cy="36" rx="5" ry="12" fill="#2d3748" transform="rotate(-15 39 36)"/>
-                        <!-- Scarf -->
-                        <rect x="15" y="28" width="20" height="6" rx="3" fill="#E74C3C"/>
-                        <!-- Feet -->
-                        <ellipse cx="18" cy="58" rx="7" ry="3" fill="#ed8936"/>
-                        <ellipse cx="32" cy="58" rx="7" ry="3" fill="#ed8936"/>
-                    </svg>
-                    <div class="badge-title">Tencent Tech</div>
-                    <p class="badge-text">
-                        借鉴腾讯技术体系<br>构建企业级应用
-                    </p>
-                    <div class="badge-tech">
-                        <span>SpringCloud</span>
-                        <span>Redis</span>
-                        <span>RabbitMQ</span>
-                    </div>
-                </div>
-
                 <!-- Skills -->
                 <div class="card">
                     <h3 class="card-title">Skills & Technologies</h3>
@@ -1099,6 +1061,15 @@
                                     <span>问答评论：RabbitMQ异步推送积分，支持匿名/实名评论</span>
                                 </div>
                             </div>
+                            <div class="arch-section" style="margin-top:8px;padding:10px 12px;">
+                                <h4 style="font-size:12px;margin-bottom:6px;"><i class="fas fa-layer-group"></i> 子模块</h4>
+                                <div class="arch-point" style="font-size:11px;margin-bottom:4px;">
+                                    <strong>Distributed-Coupon-System：</strong>分布式优惠券系统，乐观锁 + Redisson 解决高并发超发
+                                </div>
+                                <div class="arch-point" style="font-size:11px;">
+                                    <strong>Video-Learning-System：</strong>视频学习系统，Redis + DelayQueue 实现断点续播
+                                </div>
+                            </div>
                             <div class="repo-meta">
                                 <span class="repo-stat">
                                     <span class="language-color"></span>
@@ -1149,74 +1120,6 @@
                                 <span class="repo-stat">
                                     <i class="fas fa-external-link-alt"></i>
                                     <a href="https://github.com/j1a1c1k1/Mental-Health-Agent/blob/main/README.md" style="color:var(--github-accent);text-decoration:none;font-size:12px;" target="_blank">查看完整架构 →</a>
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Project 3 -->
-                        <div class="repo-card">
-                            <div class="repo-header">
-                                <a href="https://github.com/j1a1c1k1/Distributed-Coupon-System/blob/main/README.md" class="repo-name" target="_blank">
-                                    <i class="fas fa-database"></i>
-                                    Distributed-Coupon-System
-                                </a>
-                                <span class="repo-visibility">Private</span>
-                            </div>
-                            <p class="repo-desc">
-                                分布式优惠券系统 - 解决高并发下的优惠券超发超卖问题
-                            </p>
-                            <div class="project-details">
-                                <div class="project-detail-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>乐观锁 + Redisson分布式锁双重并发控制</span>
-                                </div>
-                                <div class="project-detail-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>四步最优解算法：初筛→细筛→组合→最优</span>
-                                </div>
-                            </div>
-                            <div class="repo-meta">
-                                <span class="repo-stat">
-                                    <span class="language-color"></span>
-                                    Java
-                                </span>
-                                <span class="repo-stat">
-                                    <i class="fas fa-external-link-alt"></i>
-                                    <a href="https://github.com/j1a1c1k1/Distributed-Coupon-System/blob/main/README.md" style="color:var(--github-accent);text-decoration:none;font-size:12px;" target="_blank">查看完整架构 →</a>
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Project 4 -->
-                        <div class="repo-card">
-                            <div class="repo-header">
-                                <a href="https://github.com/j1a1c1k1/Video-Learning-System/blob/main/README.md" class="repo-name" target="_blank">
-                                    <i class="fas fa-video"></i>
-                                    Video-Learning-System
-                                </a>
-                                <span class="repo-visibility">Private</span>
-                            </div>
-                            <p class="repo-desc">
-                                视频学习系统 - 实现断点续播与学习进度追踪
-                            </p>
-                            <div class="project-details">
-                                <div class="project-detail-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>Redis合并写请求 + DelayQueue 延迟批量落库</span>
-                                </div>
-                                <div class="project-detail-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>视频播放误差控制在30秒内</span>
-                                </div>
-                            </div>
-                            <div class="repo-meta">
-                                <span class="repo-stat">
-                                    <span class="language-color"></span>
-                                    Java
-                                </span>
-                                <span class="repo-stat">
-                                    <i class="fas fa-external-link-alt"></i>
-                                    <a href="https://github.com/j1a1c1k1/Video-Learning-System/blob/main/README.md" style="color:var(--github-accent);text-decoration:none;font-size:12px;" target="_blank">查看完整架构 →</a>
                                 </span>
                             </div>
                         </div>
